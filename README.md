@@ -17,7 +17,7 @@ Your group has been given a GitHub repository containing a starter Python ROS 2 
 | 3 | [Understand your ROS 2 package](docs/03-understanding-the-package.md) | See where the Python files live and how ROS 2 finds your programs. |
 | 4 | [Exercise: read the robot's position](docs/04-reading-robot-position.md) | Create and run a small Python ROS 2 node that displays data from the E6. |
 
-The guides are being expanded; pages marked **Guide in preparation** are not yet complete.
+The guides include practical exercises and reference material. The troubleshooting guide and screenshot annotations are still being developed.
 
 ## Practical reference guides
 
