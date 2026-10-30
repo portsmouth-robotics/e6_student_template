@@ -158,4 +158,4 @@ Continue with [2. Running the robot](02-running-the-robot.md), where you'll star
 
 For a deeper explanation of the source files and how to add your own programs, see [3. Understanding your ROS 2 package](03-understanding-the-package.md).
 
-**Before leaving the lab:** [Follow the save-and-sign-out checklist](../IMPORTANT.md). Any changes you've made must be committed and pushed to GitHub.
+**Before leaving the lab:** Complete the [Git and VS Code setup and saving guide](git-and-vscode.md), including setting your Git commit name and email address, then [follow the save-and-sign-out checklist](../IMPORTANT.md). Your Linux profile may be cleared between sessions, so do not rely on Git settings or files being retained locally. Any changes you've made must be committed and pushed to GitHub.
