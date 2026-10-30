@@ -279,7 +279,47 @@ Follow the tool's prompts to turn vacuum off. If the test is interrupted, **veri
 
 See [Controlling the gripper](controlling-the-gripper.md).
 
-### The robot is in drag mode or has a safety fault
+### I bumped the robot / moved it too fast and it stopped with an error
+
+The E6 may detect a collision or enter a protective/error state after unexpected contact or movement. **A stop is a safety response, not simply a software glitch.** Do not keep repeating the movement command or immediately restart an automatic program.
+
+**For students:**
+
+1. **Stop your program** so it cannot continue sending movement requests. Alert teaching staff.
+2. Look for the cause: contact with a fixture, an obstructed path, an unsupported object, or an inappropriate commanded speed or pose. **Do not force the robot's joints** or reach into an unsafe position.
+3. Record any alarm shown by the robot controller or Dobot software. Explain what the robot was doing when it stopped.
+4. **Only resume when staff have confirmed that the cause is removed and the robot is safe.** The interrupted movement sequence must be checked before it is restarted.
+
+**For teaching staff — software recovery to investigate before power-cycling:**
+
+The installed ROS 2 driver exposes services for checking the controller state and clearing alarms. With the driver connected, inspect the state first:
+
+```bash
+ros2 service call /dobot_bringup_ros2/srv/GetErrorID dobot_msgs_v4/srv/GetErrorID "{}"
+ros2 service call /dobot_bringup_ros2/srv/RobotMode dobot_msgs_v4/srv/RobotMode "{}"
+```
+
+If the cause of the stop has been identified and removed, the area is clear, and no emergency stop or other safety condition remains active, the driver provides:
+
+```bash
+ros2 service call /dobot_bringup_ros2/srv/ClearError dobot_msgs_v4/srv/ClearError "{}"
+```
+
+Inspect the returned result and **recheck the alarm and robot mode**. Clearing an alarm does not necessarily remove its cause or make the robot ready. Where appropriate, staff can then re-enable the robot through its normal procedure; the driver also exposes:
+
+```bash
+ros2 service call /dobot_bringup_ros2/srv/EnableRobot dobot_msgs_v4/srv/EnableRobot "{}"
+```
+
+**Important:** Clear/enable is **not** permission to resume the old program. Previously queued or interrupted motion commands must be accounted for before re-enabling or resuming execution. Ensure that no program will unexpectedly restart motion. Do not send `Continue` blindly: this driver also has a continuation service, but resuming an interrupted trajectory may be unsafe. If the alarm persists, the state is unclear, a collision could have caused damage, or the robot does not return to a known safe condition, stop and escalate; a controlled restart may be necessary.
+
+**Emergency stop is different:** if the physical emergency-stop button has been activated, it must first be released by the authorised operator **after the hazard has been removed**. The E6 manual specifies releasing the emergency stop, then clearing the alarm in software and re-enabling the robot. Never bypass an active emergency stop or other safety function.
+
+This is a **staff procedure to verify on the actual lab E6 before adopting as a routine recovery method**. It is based on available ROS 2 service definitions and the manufacturer's general recovery sequence, not a tested lab-specific collision-recovery procedure.
+
+See [Dobot Magician E6 User Guide](https://cdn.robotshop.com/media/D/Dot/RB-Dot-62/pdf/dobot-magician-e6-user-guide.pdf) and the driver's [service definitions](https://github.com/portsmouth-robotics/DOBOT_6Axis_ROS2_V4/tree/main/dobot_msgs_v4/srv).
+
+### The robot is in drag mode or has another safety fault
 
 **Stop and ask teaching staff.** Do not force the arm or try to override a safety state. If drag mode was deliberately enabled, follow the supervised procedure for safely supporting and locking the arm before leaving it.
 
