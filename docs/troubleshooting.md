@@ -287,14 +287,14 @@ Minor contact or moving the arm too quickly can trigger an E6 collision/protecti
 
 1. **Stop your running program first.** Press **Ctrl+C** in the terminal that was commanding the robot, and check that no other program is sending movements. Don't allow an old sequence to restart unexpectedly.
 2. **Check what happened.** Is the robot touching anything? Is its path obstructed? Was it moved too quickly? Check the gripper and any held object. Never force the arm to free it.
-3. **Check the alarm.** If the driver is still connected, use:
+3. **Check the robot's operating mode and any alarm IDs.** If the driver is still connected, use:
 
    ```bash
    ros2 service call /dobot_bringup_ros2/srv/GetErrorID dobot_msgs_v4/srv/GetErrorID "{}"
    ros2 service call /dobot_bringup_ros2/srv/RobotMode dobot_msgs_v4/srv/RobotMode "{}"
    ```
 
-   These requests **read the controller state**; they do not command movement. Note any error code you don't recognise.
+   These requests **read the controller state**; they do not command movement. **Do not confuse the two results:** `RobotMode` returns an operating-state number; `GetErrorID` returns controller alarm IDs. See the [Dobot ROS driver Robot Status Codes table](https://github.com/Dobot-Arm/TCP-IP-ROS-6AXis/blob/feature/v4-optimization/README.md#robot-status-codes) for operating modes. Common values are **5 = enabled/idle**, **7 = running**, **9 = error/alarm**, **10 = paused**, and **11 = collision detected**. For an ordinary **yellow collision stop**, `RobotMode` returning **11** is expected; this is a collision *state*, not an alarm ID in `GetErrorID`. The [E6 User Guide, section 3.3](https://cdn.robotshop.com/media/D/Dot/RB-Dot-62/pdf/dobot-magician-e6-user-guide.pdf) also identifies a steady yellow indicator as collision detected. If `GetErrorID` reports an actual alarm code, consult the E6 controller's alarm information in DobotStudio Pro or the applicable controller alarm documentation, and ask staff if the code is unfamiliar. **Do not use the older Dobot Magician ALARM list for the E6 without verifying that it applies to this controller.**
 4. **When the cause is removed and the work area is clear**, clear the error:
 
    ```bash
@@ -302,7 +302,7 @@ Minor contact or moving the arm too quickly can trigger an E6 collision/protecti
    ```
 
    Check the result. If the alarm remains active, **don't keep clearing it repeatedly**; ask for help.
-5. **Check the robot's state again.** If it is ready to be enabled, and **all previous programs/motion sequences are stopped**, re-enable it:
+5. **Check the robot's state again.** On an ordinary yellow collision stop (`RobotMode = 11`), **clearing the collision does not normally require another `EnableRobot` call**. Check that the mode returns to a ready state. If the robot is actually **disabled** rather than simply in collision mode, and all previous programs/motion sequences are stopped, re-enable it if appropriate:
 
    ```bash
    ros2 service call /dobot_bringup_ros2/srv/EnableRobot dobot_msgs_v4/srv/EnableRobot "{}"
@@ -316,7 +316,7 @@ Minor contact or moving the arm too quickly can trigger an E6 collision/protecti
 
 **Do not use `Continue` as a general recovery shortcut.** The driver exposes a continuation service, but it may resume interrupted or queued motion. Clearing an error and enabling the robot also **do not guarantee that an old command queue is empty**; stopping the controlling program and establishing a known safe state matter.
 
-These service commands are available in the installed driver's interface, but **this precise collision-recovery workflow still needs a controlled check on a lab E6** before it is taught as the default procedure. Until then, use the established lab recovery instructions.
+**Lab verification (2 November 2026):** The collision-error clearing procedure has been successfully tested on an E6. A yellow collision stop produced `RobotMode` value **11**, and the collision could be cleared without power-cycling. Continue to follow the stop/check/clear/reassess sequence and escalate unfamiliar or recurring faults.
 
 See the [DOBOT E6 user manual](https://cdn.robotshop.com/media/D/Dot/RB-Dot-62/pdf/dobot-magician-e6-user-guide.pdf) and the [driver's ROS 2 service definitions](https://github.com/portsmouth-robotics/DOBOT_6Axis_ROS2_V4/tree/main/dobot_msgs_v4/srv).
 
