@@ -312,11 +312,9 @@ Minor contact or moving the arm too quickly can trigger an E6 collision/protecti
 
 **When to ask teaching staff:** If the error is unfamiliar, persists after one recovery attempt, recurs at the same location, involves a trapped object or possible damage, or the robot behaves unexpectedly, stop and ask. Students can clear routine collision alarms, but should not diagnose unusual safety faults by trial and error.
 
-**Emergency stop is different:** If the physical emergency-stop button is engaged, follow the lab's emergency-stop procedure. Remove the hazard first; do not bypass an active emergency stop or other safety function. Ask staff if unsure about the reason it was activated.
+**Emergency stop is different:** If the physical emergency-stop button is engaged, check that there's no hazard first, and then reset it by twisting it - it should pop up.
 
 **Do not use `Continue` as a general recovery shortcut.** The driver exposes a continuation service, but it may resume interrupted or queued motion. Clearing an error and enabling the robot also **do not guarantee that an old command queue is empty**; stopping the controlling program and establishing a known safe state matter.
-
-**Lab verification (2 November 2026):** The collision-error clearing procedure has been successfully tested on an E6. A yellow collision stop produced `RobotMode` value **11**, and the collision could be cleared without power-cycling. Continue to follow the stop/check/clear/reassess sequence and escalate unfamiliar or recurring faults.
 
 See the [DOBOT E6 user manual](https://cdn.robotshop.com/media/D/Dot/RB-Dot-62/pdf/dobot-magician-e6-user-guide.pdf) and the [driver's ROS 2 service definitions](https://github.com/portsmouth-robotics/DOBOT_6Axis_ROS2_V4/tree/main/dobot_msgs_v4/srv).
 
